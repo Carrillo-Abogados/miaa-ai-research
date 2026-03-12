@@ -1,0 +1,763 @@
+#Milton Orlando Sarria Paja
+#universidad Icesi
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprendizaje Automático I - Dashboard Avanzado</title>
+    <style>
+        /* --- ESTILOS GENERALES (Tema Oscuro / Dashboard) --- */
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --panel-bg: #162032;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #38bdf8; /* Cyan */
+            --accent-hover: #0ea5e9;
+            --danger: #ef4444; /* Red */
+            --success: #22c55e; /* Green */
+            --border-radius: 12px;
+            --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            --mono-font: 'Courier New', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- HEADER --- */
+        header {
+            padding: 0.8rem 2rem;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--card-bg);
+            height: 60px;
+        }
+
+        h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; }
+        .badge { background: var(--accent); color: #0f172a; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-left: 10px; text-transform: uppercase;}
+
+        /* --- LAYOUT PRINCIPAL (3 COLUMNAS) --- */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px; /* Izq - Centro - Der */
+            flex: 1;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+
+        /* --- PANELES LATERALES --- */
+        .sidebar {
+            background-color: var(--card-bg);
+            padding: 1rem;
+            border-right: 1px solid #334155;
+            border-left: 1px solid #334155; /* Para el derecho */
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-y: auto;
+        }
+
+        .sidebar-right {
+            border-left: 1px solid #334155;
+            border-right: none;
+        }
+
+        .control-group {
+            background: var(--panel-bg);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid #334155;
+        }
+
+        .control-group h3 {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 5px;
+        }
+
+        label { display: block; font-size: 0.8rem; margin-bottom: 0.3rem; color: var(--text-secondary); }
+        
+        /* Inputs & Sliders */
+        input[type="range"] { width: 100%; accent-color: var(--accent); margin-bottom: 0.5rem; cursor: pointer;}
+        input[type="number"] { 
+            width: 100%; padding: 6px; background: var(--bg-color); 
+            color: white; border: 1px solid #475569; border-radius: 6px; outline: none;
+        }
+        select {
+            width: 100%; padding: 8px; background: var(--bg-color);
+            color: white; border: 1px solid #475569; border-radius: 6px; margin-bottom: 0.5rem; outline: none; cursor: pointer;
+        }
+
+        /* Botones */
+        .btn {
+            width: 100%; padding: 0.6rem; border: none; border-radius: 6px;
+            font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; margin-top: 5px;
+        }
+        .btn-primary { background-color: var(--accent); color: #0f172a; }
+        .btn-primary:hover { background-color: var(--accent-hover); }
+        .btn-danger { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+        .btn-danger:hover { background-color: rgba(239, 68, 68, 0.4); }
+        .btn-sm { padding: 2px 6px; font-size: 0.7rem; width: auto; margin: 0; }
+
+        /* Tablas (Coeficientes y Datos) */
+        .data-table-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 0.5rem;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; font-family: var(--mono-font); }
+        th { text-align: left; color: var(--text-secondary); padding: 5px; font-size: 0.75rem; border-bottom: 1px solid #475569; position: sticky; top: 0; background: var(--panel-bg); }
+        td { padding: 6px 5px; border-bottom: 1px solid #334155; }
+        td.val { text-align: right; color: var(--accent); }
+        tr:hover { background-color: rgba(255,255,255,0.05); }
+
+        /* Métricas */
+        .metric-row {
+            display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.9rem;
+        }
+        .metric-val { font-family: var(--mono-font); font-weight: bold; color: var(--success); }
+
+        /* --- MAIN CANVAS --- */
+        .main-content {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            overflow: hidden;
+        }
+
+        canvas {
+            background-color: #0f172a;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+            cursor: crosshair;
+        }
+
+        .canvas-overlay {
+            position: absolute;
+            top: 15px; left: 50%; transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.9);
+            padding: 8px 16px; border-radius: 20px;
+            border: 1px solid var(--accent); color: var(--accent);
+            font-family: var(--mono-font); font-weight: bold;
+            font-size: 0.9rem; pointer-events: none;
+        }
+
+        .instructions {
+            position: absolute; bottom: 15px; left: 15px;
+            color: var(--text-secondary); font-size: 0.8rem;
+            background: rgba(0,0,0,0.6); padding: 8px 12px; border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .training-active { animation: pulse 1s infinite; }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(56, 189, 248, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="display:flex; align-items:center;">
+            <h1>Aprendizaje Automático I</h1>
+            <span class="badge">Dashboard Interactivo</span>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-secondary);">
+            Introducción a la Regresión
+        </div>
+    </header>
+
+    <div class="dashboard">
+        
+        <!-- COLUMNA IZQUIERDA: CONTROLES -->
+        <aside class="sidebar">
+            
+            <div class="control-group">
+                <h3>1. Configuración</h3>
+                <label for="modelSelect">Seleccionar Modelo:</label>
+                <select id="modelSelect" onchange="changeModel()">
+                    <option value="linear">Regresión Lineal (Predicción)</option>
+                    <option value="logistic">Regresión Logística (Clasificación)</option>
+                </select>
+                <button class="btn btn-danger" onclick="resetData()">Reiniciar Todo</button>
+            </div>
+
+            <div class="control-group">
+                <h3>2. Ajuste Manual (&theta;)</h3>
+                <div class="slider-container">
+                    <label>Bias (&theta;<sub>0</sub>): <span id="val-t0" style="float:right; color:var(--accent)">0.00</span></label>
+                    <input type="range" id="slider-t0" min="-10" max="10" step="0.1" value="0" oninput="updateManual()">
+                </div>
+                <div class="slider-container">
+                    <label>Peso 1 (&theta;<sub>1</sub>): <span id="val-t1" style="float:right; color:var(--accent)">0.00</span></label>
+                    <input type="range" id="slider-t1" min="-5" max="5" step="0.1" value="0" oninput="updateManual()">
+                </div>
+                <div class="slider-container" id="container-t2" style="display:none;">
+                    <label>Peso 2 (&theta;<sub>2</sub>): <span id="val-t2" style="float:right; color:var(--accent)">0.00</span></label>
+                    <input type="range" id="slider-t2" min="-5" max="5" step="0.1" value="0" oninput="updateManual()">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>3. Entrenamiento</h3>
+                
+                <label>Learning Rate (&alpha;): <span id="val-lr" style="float:right">0.01</span></label>
+                <input type="range" id="slider-lr" min="0.001" max="0.2" step="0.001" value="0.01" oninput="document.getElementById('val-lr').innerText = this.value">
+                
+                <label style="margin-top:10px;">Máx Iteraciones (Épocas):</label>
+                <input type="number" id="input-max-iter" value="500" min="10" step="10">
+                
+                <div style="margin-top:10px; display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-secondary);">
+                    <span>Época Actual:</span>
+                    <span id="epoch-display" style="color:var(--text-primary)">0</span>
+                </div>
+
+                <button id="btn-train" class="btn btn-primary" style="margin-top:15px;" onclick="toggleTraining()">Iniciar Gradiente Descendente</button>
+            </div>
+
+            <div class="control-group">
+                <h3>Valores de &theta;</h3>
+                <table>
+                    <tbody>
+                        <tr><td>&theta;<sub>0</sub> (Intercepto)</td><td class="val" id="table-t0">0.000</td></tr>
+                        <tr><td>&theta;<sub>1</sub> (Pendiente X)</td><td class="val" id="table-t1">0.000</td></tr>
+                        <tr id="row-t2" style="display:none;"><td>&theta;<sub>2</sub> (Pendiente Y)</td><td class="val" id="table-t2">0.000</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </aside>
+
+        <!-- COLUMNA CENTRAL: VISUALIZACIÓN -->
+        <main class="main-content">
+            <div class="canvas-overlay">
+                <span id="cost-display">Costo J(&theta;): 0.0000</span>
+            </div>
+
+            <canvas id="aiCanvas"></canvas>
+
+            <div class="instructions" id="instructions">
+                <!-- Se llena dinamicamente -->
+            </div>
+        </main>
+
+        <!-- COLUMNA DERECHA: MÉTRICAS Y DATOS -->
+        <aside class="sidebar sidebar-right">
+            
+            <div class="control-group">
+                <h3>Métricas de Rendimiento</h3>
+                <div id="metrics-panel">
+                    <!-- Se llena dinamicamente JS -->
+                </div>
+            </div>
+
+            <div class="control-group" style="flex:1; display:flex; flex-direction:column;">
+                <h3>Dataset (<span id="point-count">0</span> puntos)</h3>
+                <div class="data-table-container">
+                    <table id="points-table">
+                        <thead>
+                            <tr id="table-header">
+                                <!-- Headers Dinamicos -->
+                            </tr>
+                        </thead>
+                        <tbody id="points-body">
+                            <!-- Filas Dinamicas -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </aside>
+    </div>
+
+<script>
+    /* --- ESTADO Y CONFIGURACIÓN --- */
+    const canvas = document.getElementById('aiCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let state = {
+        model: 'linear', // 'linear' | 'logistic'
+        points: [],      // Array de objetos {id, x, y, label?}
+        thetas: [0, 0, 0], 
+        isTraining: false,
+        animationFrame: null,
+        epoch: 0,
+        idCounter: 0     // Para generar IDs unicos
+    };
+
+    // Layout del Canvas
+    let SCALE = 40; 
+    let ORIGIN = { x: 0, y: 0 };
+
+    function resizeCanvas() {
+        const container = document.querySelector('.main-content');
+        canvas.width = container.clientWidth - 40;
+        canvas.height = container.clientHeight - 40;
+        ORIGIN = { x: canvas.width / 2, y: canvas.height / 2 };
+        draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    /* --- INICIALIZACIÓN --- */
+    function init() {
+        resizeCanvas();
+        changeModel(); // Configura UI inicial
+    }
+
+    /* --- LÓGICA UI --- */
+    function changeModel() {
+        state.model = document.getElementById('modelSelect').value;
+        resetData();
+
+        // Elementos DOM
+        const t2Container = document.getElementById('container-t2');
+        const t2Row = document.getElementById('row-t2');
+        const instructions = document.getElementById('instructions');
+
+        if (state.model === 'logistic') {
+            // Config Logística
+            t2Container.style.display = 'block';
+            t2Row.style.display = 'table-row';
+            state.thetas[2] = 1; // Valor inicial para evitar división por cero visual
+            document.getElementById('slider-t2').value = 1;
+            instructions.innerHTML = "🖱️ <strong>Clic Izq:</strong> Clase 0 (Azul) | <strong>Clic Der:</strong> Clase 1 (Rojo)";
+        } else {
+            // Config Lineal
+            t2Container.style.display = 'none';
+            t2Row.style.display = 'none';
+            state.thetas[2] = 0;
+            instructions.innerHTML = "🖱️ <strong>Clic:</strong> Agregar punto (x, y)";
+        }
+        
+        updateUI();
+        draw();
+    }
+
+    function resetData() {
+        state.points = [];
+        state.thetas = [0, 0, state.model === 'logistic' ? 1 : 0];
+        state.isTraining = false;
+        state.epoch = 0;
+        state.idCounter = 0;
+        
+        document.getElementById('btn-train').innerText = "Iniciar Gradiente Descendente";
+        document.getElementById('btn-train').classList.remove('training-active');
+        
+        // Reset inputs visuales
+        document.getElementById('slider-t0').value = 0;
+        document.getElementById('slider-t1').value = 0;
+        document.getElementById('slider-t2').value = state.model === 'logistic' ? 1 : 0;
+        document.getElementById('epoch-display').innerText = "0";
+
+        draw();
+        updateUI();
+    }
+
+    function updateManual() {
+        if(state.isTraining) toggleTraining(); // Pausa si mueve slider
+
+        state.thetas[0] = parseFloat(document.getElementById('slider-t0').value);
+        state.thetas[1] = parseFloat(document.getElementById('slider-t1').value);
+        state.thetas[2] = parseFloat(document.getElementById('slider-t2').value);
+        
+        draw();
+        updateUI();
+    }
+
+    function deletePoint(id) {
+        state.points = state.points.filter(p => p.id !== id);
+        draw();
+        updateUI();
+    }
+
+    /* --- EVENTOS DEL CANVAS --- */
+    canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const pixelX = e.clientX - rect.left;
+        const pixelY = e.clientY - rect.top;
+
+        // Pixel -> Matemáticas
+        const x = (pixelX - ORIGIN.x) / SCALE;
+        const y = -(pixelY - ORIGIN.y) / SCALE;
+
+        const newPoint = {
+            id: state.idCounter++,
+            x: x, // O x1 en logistica
+            y: y  // O x2 en logistica
+        };
+
+        if (state.model === 'logistic') {
+            // 0 (Izq) = Clase 0, 2 (Der) = Clase 1
+            newPoint.label = e.button === 2 ? 1 : 0;
+        }
+
+        state.points.push(newPoint);
+        draw();
+        updateUI();
+    });
+
+    canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+    /* --- LÓGICA MATEMÁTICA --- */
+
+    function hLinear(x, t0, t1) { return t0 + t1 * x; }
+    function sigmoid(z) { return 1 / (1 + Math.exp(-z)); }
+    function hLogistic(x1, x2, t0, t1, t2) { return sigmoid(t0 + t1 * x1 + t2 * x2); }
+
+    function calculateCost() {
+        let m = state.points.length;
+        if (m === 0) return 0;
+        let sum = 0;
+
+        if (state.model === 'linear') {
+            // J = (1/2m) * sum((h-y)^2)
+            for (let p of state.points) {
+                let h = hLinear(p.x, state.thetas[0], state.thetas[1]);
+                sum += Math.pow(h - p.y, 2);
+            }
+            return sum / (2 * m);
+        } else {
+            // J = -1/m * sum(y*log(h) + (1-y)*log(1-h))
+            const eps = 1e-15; 
+            for (let p of state.points) {
+                let h = hLogistic(p.x, p.y, state.thetas[0], state.thetas[1], state.thetas[2]);
+                h = Math.max(eps, Math.min(1 - eps, h)); // Clipping
+                sum += p.label * Math.log(h) + (1 - p.label) * Math.log(1 - h);
+            }
+            return -sum / m;
+        }
+    }
+
+    function trainStep() {
+        let m = state.points.length;
+        if (m === 0) return;
+        
+        let alpha = parseFloat(document.getElementById('slider-lr').value);
+        let grad = [0, 0, 0];
+
+        if (state.model === 'linear') {
+            for (let p of state.points) {
+                let h = hLinear(p.x, state.thetas[0], state.thetas[1]);
+                let err = h - p.y;
+                grad[0] += err;
+                grad[1] += err * p.x;
+            }
+        } else {
+            for (let p of state.points) {
+                let h = hLogistic(p.x, p.y, state.thetas[0], state.thetas[1], state.thetas[2]);
+                let err = h - p.label;
+                grad[0] += err;
+                grad[1] += err * p.x; // x1
+                grad[2] += err * p.y; // x2
+            }
+        }
+
+        // Actualizar Thetas
+        state.thetas[0] -= alpha * (grad[0] / m);
+        state.thetas[1] -= alpha * (grad[1] / m);
+        if (state.model === 'logistic') state.thetas[2] -= alpha * (grad[2] / m);
+
+        state.epoch++;
+    }
+
+    function toggleTraining() {
+        state.isTraining = !state.isTraining;
+        const btn = document.getElementById('btn-train');
+        
+        if (state.isTraining) {
+            btn.innerText = "Detener";
+            btn.classList.add('training-active');
+            loop();
+        } else {
+            btn.innerText = "Continuar Entrenamiento";
+            btn.classList.remove('training-active');
+            cancelAnimationFrame(state.animationFrame);
+        }
+    }
+
+    function loop() {
+        if (!state.isTraining) return;
+
+        const maxIter = parseInt(document.getElementById('input-max-iter').value) || 1000;
+        
+        if (state.epoch >= maxIter) {
+            state.isTraining = false;
+            document.getElementById('btn-train').innerText = "Entrenamiento Completo";
+            document.getElementById('btn-train').classList.remove('training-active');
+            return;
+        }
+
+        // Múltiples pasos por frame para velocidad
+        for(let i=0; i<5; i++) {
+            if (state.epoch < maxIter) trainStep();
+        }
+        
+        draw();
+        updateUI();
+        syncSliders();
+        state.animationFrame = requestAnimationFrame(loop);
+    }
+
+    function syncSliders() {
+        document.getElementById('slider-t0').value = state.thetas[0];
+        document.getElementById('slider-t1').value = state.thetas[1];
+        document.getElementById('slider-t2').value = state.thetas[2];
+        document.getElementById('epoch-display').innerText = state.epoch;
+    }
+
+    /* --- MÉTRICAS --- */
+    function calculateMetrics() {
+        let m = state.points.length;
+        if (m === 0) return null;
+
+        if (state.model === 'linear') {
+            let totalAbsError = 0;
+            let totalSqError = 0;
+            for (let p of state.points) {
+                let h = hLinear(p.x, state.thetas[0], state.thetas[1]);
+                let err = h - p.y;
+                totalAbsError += Math.abs(err);
+                totalSqError += (err * err);
+            }
+            return {
+                mae: totalAbsError / m,
+                mse: totalSqError / m
+            };
+        } else {
+            let tp = 0, tn = 0, fp = 0, fn = 0;
+            for (let p of state.points) {
+                let h = hLogistic(p.x, p.y, state.thetas[0], state.thetas[1], state.thetas[2]);
+                let pred = h >= 0.5 ? 1 : 0;
+                
+                if (pred === 1 && p.label === 1) tp++;
+                if (pred === 0 && p.label === 0) tn++;
+                if (pred === 1 && p.label === 0) fp++;
+                if (pred === 0 && p.label === 1) fn++;
+            }
+            
+            let accuracy = (tp + tn) / m;
+            let precision = (tp + fp) === 0 ? 0 : tp / (tp + fp);
+            let recall = (tp + fn) === 0 ? 0 : tp / (tp + fn);
+
+            return { accuracy, precision, recall };
+        }
+    }
+
+    /* --- ACTUALIZAR UI COMPLETA --- */
+    function updateUI() {
+        // 1. Valores Thetas Textos
+        document.getElementById('val-t0').innerText = state.thetas[0].toFixed(2);
+        document.getElementById('val-t1').innerText = state.thetas[1].toFixed(2);
+        document.getElementById('val-t2').innerText = state.thetas[2].toFixed(2);
+        
+        // 2. Tabla Coeficientes
+        document.getElementById('table-t0').innerText = state.thetas[0].toFixed(4);
+        document.getElementById('table-t1').innerText = state.thetas[1].toFixed(4);
+        document.getElementById('table-t2').innerText = state.thetas[2].toFixed(4);
+
+        // 3. Costo
+        const cost = calculateCost();
+        document.getElementById('cost-display').innerText = `J(θ): ${cost.toFixed(4)}`;
+
+        // 4. Panel Métricas
+        const metrics = calculateMetrics();
+        const panel = document.getElementById('metrics-panel');
+        
+        if (!metrics) {
+            panel.innerHTML = '<div style="text-align:center; color:#64748b; font-size:0.8rem; padding:10px;">Agrega puntos para ver métricas</div>';
+        } else if (state.model === 'linear') {
+            panel.innerHTML = `
+                <div class="metric-row"><span>MAE (Error Abs):</span> <span class="metric-val">${metrics.mae.toFixed(4)}</span></div>
+                <div class="metric-row"><span>MSE (Error Cuad):</span> <span class="metric-val">${metrics.mse.toFixed(4)}</span></div>
+            `;
+        } else {
+            panel.innerHTML = `
+                <div class="metric-row"><span>Accuracy:</span> <span class="metric-val">${(metrics.accuracy*100).toFixed(1)}%</span></div>
+                <div class="metric-row"><span>Precision:</span> <span class="metric-val">${(metrics.precision*100).toFixed(1)}%</span></div>
+                <div class="metric-row"><span>Recall:</span> <span class="metric-val">${(metrics.recall*100).toFixed(1)}%</span></div>
+            `;
+        }
+
+        // 5. Tabla Datos Dinámica
+        document.getElementById('point-count').innerText = state.points.length;
+        const thead = document.getElementById('table-header');
+        const tbody = document.getElementById('points-body');
+
+        // Headers
+        if (state.model === 'linear') {
+            thead.innerHTML = `<th>X</th><th>Y</th><th style="text-align:center">Acción</th>`;
+        } else {
+            thead.innerHTML = `<th>X1</th><th>X2</th><th>Clase</th><th style="text-align:center">Acción</th>`;
+        }
+
+        // Rows (Reconstrucción simple, se podría optimizar para muchos datos pero sirve didácticamente)
+        tbody.innerHTML = state.points.map(p => {
+            if (state.model === 'linear') {
+                return `
+                    <tr>
+                        <td class="val">${p.x.toFixed(2)}</td>
+                        <td class="val">${p.y.toFixed(2)}</td>
+                        <td style="text-align:center;">
+                            <button class="btn btn-danger btn-sm" onclick="deletePoint(${p.id})">&times;</button>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                return `
+                    <tr>
+                        <td class="val">${p.x.toFixed(2)}</td>
+                        <td class="val">${p.y.toFixed(2)}</td>
+                        <td style="text-align:center; color: ${p.label===0 ? 'var(--accent)' : 'var(--danger)'}; font-weight:bold;">${p.label}</td>
+                        <td style="text-align:center;">
+                            <button class="btn btn-danger btn-sm" onclick="deletePoint(${p.id})">&times;</button>
+                        </td>
+                    </tr>
+                `;
+            }
+        }).join('');
+    }
+
+
+    /* --- DIBUJO EN CANVAS --- */
+    function toPixel(mx, my) {
+        return {
+            x: ORIGIN.x + mx * SCALE,
+            y: ORIGIN.y - my * SCALE
+        };
+    }
+
+    function draw() {
+        // Clear
+        ctx.fillStyle = "#0f172a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Grid
+        ctx.strokeStyle = "#334155";
+        ctx.lineWidth = 1;
+        
+        // Líneas guia
+        const unitsX = Math.ceil(canvas.width / SCALE / 2);
+        const unitsY = Math.ceil(canvas.height / SCALE / 2);
+
+        ctx.beginPath();
+        for(let i = -unitsX; i <= unitsX; i++) {
+            let p = toPixel(i, 0);
+            ctx.moveTo(p.x, 0); ctx.lineTo(p.x, canvas.height);
+        }
+        for(let i = -unitsY; i <= unitsY; i++) {
+            let p = toPixel(0, i);
+            ctx.moveTo(0, p.y); ctx.lineTo(canvas.width, p.y);
+        }
+        ctx.stroke();
+
+        // Ejes Principales
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(ORIGIN.x, 0); ctx.lineTo(ORIGIN.x, canvas.height);
+        ctx.moveTo(0, ORIGIN.y); ctx.lineTo(canvas.width, ORIGIN.y);
+        ctx.stroke();
+
+        // Datos
+        for (let p of state.points) {
+            const pos = toPixel(p.x, p.y);
+            const color = (state.model === 'linear') 
+                          ? "#38bdf8" 
+                          : (p.label === 0 ? "#38bdf8" : "#ef4444");
+            
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 5, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Modelo
+        ctx.strokeStyle = "#22c55e";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+
+        const xMin = -unitsX - 5;
+        const xMax = unitsX + 5;
+
+        if (state.model === 'linear') {
+            // Linea: y = t0 + t1*x
+            const p1 = toPixel(xMin, state.thetas[0] + state.thetas[1] * xMin);
+            const p2 = toPixel(xMax, state.thetas[0] + state.thetas[1] * xMax);
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+
+            // Residuos
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "rgba(239, 68, 68, 0.3)";
+            ctx.setLineDash([4, 4]);
+            for(let p of state.points){
+                let h = state.thetas[0] + state.thetas[1] * p.x;
+                let pixP = toPixel(p.x, p.y);
+                let pixH = toPixel(p.x, h);
+                ctx.beginPath(); ctx.moveTo(pixP.x, pixP.y); ctx.lineTo(pixH.x, pixH.y); ctx.stroke();
+            }
+            ctx.setLineDash([]);
+
+        } else {
+            // Frontera Logistica: t0 + t1*x1 + t2*x2 = 0  => x2 = -(t0 + t1*x1)/t2
+            if (Math.abs(state.thetas[2]) > 0.001) {
+                let yStart = -(state.thetas[0] + state.thetas[1] * xMin) / state.thetas[2];
+                let yEnd = -(state.thetas[0] + state.thetas[1] * xMax) / state.thetas[2];
+                let p1 = toPixel(xMin, yStart);
+                let p2 = toPixel(xMax, yEnd);
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+            } else if (Math.abs(state.thetas[1]) > 0.001) {
+                // Linea vertical x1 = -t0/t1
+                let xVert = -state.thetas[0] / state.thetas[1];
+                let pTop = toPixel(xVert, 20);
+                let pBot = toPixel(xVert, -20);
+                ctx.moveTo(pTop.x, pTop.y);
+                ctx.lineTo(pBot.x, pBot.y);
+            }
+            ctx.stroke();
+        }
+    }
+
+    // Iniciar
+    init();
+
+</script>
+</body>
+</html>
