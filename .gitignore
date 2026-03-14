@@ -29,16 +29,19 @@ env/
 Thumbs.db
 desktop.ini
 
-# Data (large files)
+# Video recordings (too large for git)
 *.mp4
 *.avi
 *.mov
 *.mkv
+Grabaciones de Clase/
+
+# Archives
 *.zip
 *.tar.gz
 *.rar
 
-# ML artifacts (track with DVC instead)
+# ML artifacts
 *.pkl
 *.joblib
 *.h5
@@ -59,3 +62,4 @@ mlruns/
 tmp/
 temp/
 *.tmp
+CONTENIDO_DIAPOSITIVAS_SUSTENTACION.md

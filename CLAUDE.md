@@ -1,69 +1,68 @@
 # MIAA AI Research — Instrucciones de Proyecto
 
 ## Identidad
-- **Repositorio**: Investigación y desarrollo del Asistente Virtual Legal
+- **Repositorio**: Material academico MIAA — Universidad Icesi, periodo 2026-1
 - **Empresa**: Carrillo ABGD SAS (Cali, Colombia)
-- **Programa Académico**: Maestría en IA Aplicada (MIAA), Universidad Icesi, 2026-1
-- **Desarrollador Principal**: Claude Code (Opus 4.6)
+- **Programa**: Maestria en IA Aplicada (MIAA)
+- **Estado**: Ambos cursos FINALIZADOS (Marzo 2026)
 
-## Propósito
+## Proposito
 
-Este repositorio contiene:
-1. **Material académico** de dos cursos MIAA que fundamentan el desarrollo del Asistente Virtual Legal
-2. **Experimentos y prototipos** de modelos de ML/NLP para el asistente
-3. **Documentación de investigación** que respalda decisiones técnicas
+Este repositorio contiene el material academico completo de dos cursos de la MIAA:
+1. **Analisis de Datos I** (Prof. Jose Armando Ordonez) — EDA, CRISP-DM, pipelines
+2. **Aprendizaje Automatico I** (Prof. Milton Sarria) — Regresion, regularizacion, metricas, KNN
 
-**El código productivo del ai-service vive en `backend-services/`** — este repo es para investigación, experimentación y desarrollo académico.
+El proyecto academico de AD1 es el **Asistente Virtual Legal** para Carrillo Abogados, que fundamenta las decisiones tecnicas del ai-service productivo.
 
-## Cursos
+## Estructura
 
-### Análisis de Datos I
-- **Enfoque**: CRISP-DM, EDA, ingeniería de datos, pipelines, feature engineering
-- **Proyecto**: Asistente Virtual Legal (RAG) — formulación, arquitectura de datos, preparación
-- **Entregables**: Taller 1 (formulación), Taller 2 (arquitectura datos), Taller 3 (preparación datos)
-- **Ubicación**: `analisis-datos/`
+```
+Análisis de Datos I/          # Curso finalizado — sustentación 14 Mar 2026
+├── Sesión 1-5/                # Material por sesión (PDFs, notebooks, datasets)
+├── Apuntes del Curso/         # 8 PDFs de notas
+├── eda_couse-main/            # Repo del profesor (notebooks de laboratorio)
+└── Plantilla ExpoFinal...     # Template PPTX para sustentación
 
-### Aprendizaje Automático I
-- **Enfoque**: Regresión lineal/logística, regularización, métricas, KNN
-- **Proyecto**: Taller final (predicción rendimiento caña de azúcar)
-- **Libro guía**: ISLP (Introduction to Statistical Learning with Python)
-- **Ubicación**: `aprendizaje-automatico/`
+Aprendizaje Automatico I/     # Curso finalizado — examen 13 Mar 2026
+├── Unidad 1-5/                # Material por unidad (PDFs, notebooks, datasets)
+├── Taller Final/              # Caña de azúcar (datasets + rúbrica)
+├── Libros del curso/          # Referencias bibliográficas
+├── PracFin_N_*.ipynb          # Prácticas finales resueltas
+└── Examen Final AU 1.md       # Examen final resuelto
+```
 
-## Componentes del Asistente Virtual Legal
+## Entregables Academicos — AD1
 
-| Componente | Tipo Analytics | Técnica | Estado |
-|------------|---------------|---------|--------|
-| Chatbot Legal | Generativo | RAG (LLM + Vector DB) | Diseño |
-| Lead Scoring | Predictivo | LogReg / RF / XGBoost | Prototipo |
-| Intent Classification | Descriptivo | TF-IDF + clasificador | Diseño |
-| Data Pipeline | Infraestructura | Medallion (Bronze/Silver/Gold) | Diseño |
+| Entregable | Ubicacion | Estado |
+|---|---|---|
+| Taller 1: Formulacion proyecto | Sesion 2/10. Taller 1...pdf | COMPLETADO |
+| Taller 2: Arquitectura de datos | Sesion 3/16. Taller_2...ipynb | COMPLETADO |
+| Taller 3: Preparacion de datos | Sesion 5/ (requisitos en PDF) | PENDIENTE |
+| Sustentacion final | Video/presentacion 10 min | 14 Mar 2026 |
 
-## Stack Técnico
+## Entregables Academicos — ML1
 
+| Entregable | Ubicacion | Estado |
+|---|---|---|
+| Practicas finales 1-3 | PracFin_N_1/2/3 (.md + .ipynb) | COMPLETADO |
+| Taller final (cana de azucar) | Taller Final/ | COMPLETADO |
+| Examen final | Examen Final AU 1.md | COMPLETADO |
+
+## Stack Tecnico
 - **Lenguaje**: Python 3.12
 - **ML/Data**: scikit-learn, pandas, numpy, matplotlib, seaborn
-- **NLP/RAG**: LangChain, sentence-transformers, ChromaDB
-- **LLM**: Claude API (Anthropic)
-- **API**: FastAPI (prototipo) → integración en backend-services (producción)
-- **Cloud**: GCP Vertex AI (training), Cloud Run (serving)
-- **Experiment Tracking**: MLflow
+- **Ambiente**: Google Colab (notebooks con badges Colab)
+- **NLP/RAG (futuro)**: LangChain, ChromaDB, Claude API
 
-## Metodología
+## Relacion con otros repos
 
-- **CRISP-DM**: 6 fases (Business Understanding → Deployment)
-- **Reproducibilidad**: Seeds fijos, datasets versionados, notebooks exportados
-- **Compliance**: Ley 1581/2012 (Protección de Datos Personales, Colombia)
-- **Ética**: Auditoría de bias, métricas de fairness, explicabilidad (SHAP/LIME)
+| Repo | Relacion |
+|---|---|
+| `backend-services/` | Codigo productivo del ai-service (futuro) |
+| `documentation/` | Documentacion oficial (fuente de verdad) |
+| `frontend/` | UI del dashboard y chatbot |
 
-## Relación con otros repos
-
-| Repo | Relación |
-|------|----------|
-| `backend-services/` | ai-service productivo (Java wrapper o FastAPI en Cloud Run) |
-| `frontend/` | UI del chatbot y dashboard de analytics |
-| `documentation/` | Documentación oficial del ai-service |
-| `platform/` | Infraestructura (Terraform, Helm) para ai-service |
-
-## Comunicación
-- **Idioma**: Español para toda comunicación y documentación
-- **Tono**: Técnico-académico, riguroso, con referencias estadísticas
+## Comunicacion
+- **Idioma**: Espanol
+- **Tono**: Tecnico-academico
+- **IA**: Nivel 4 IAG Completa permitida en ambos cursos
