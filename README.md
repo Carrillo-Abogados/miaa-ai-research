@@ -1,3 +1,7 @@
+> **ARCHIVED**: Este repositorio contiene material academico completado de la Maestria en IA Aplicada (MIAA), Universidad Icesi, periodo 2026-1. No recibe actualizaciones activas. Sirve como referencia historica para la fundamentacion AI del proyecto Carrillo Abogados.
+
+---
+
 # MIAA AI Research — Carrillo Abogados
 
 Repositorio academico de la **Maestria en IA Aplicada (MIAA)** de la Universidad Icesi, periodo 2026-1. Contiene el material completo de dos cursos que fundamentan el desarrollo del **Asistente Virtual Legal** para Carrillo ABGD SAS.
