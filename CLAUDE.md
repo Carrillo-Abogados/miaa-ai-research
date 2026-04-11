@@ -1,68 +1,60 @@
-# MIAA AI Research — Instrucciones de Proyecto
+# CLAUDE.md — Moni AI Research
 
 ## Identidad
-- **Repositorio**: Material academico MIAA — Universidad Icesi, periodo 2026-1
-- **Empresa**: Carrillo ABGD SAS (Cali, Colombia)
-- **Programa**: Maestria en IA Aplicada (MIAA)
-- **Estado**: Ambos cursos FINALIZADOS (Marzo 2026)
+
+- **Repositorio**: Documentacion CRISP-ML(Q) del proyecto Moni + material academico MIAA
+- **Programa**: Maestria en IA Aplicada — Universidad Icesi
+- **Curso activo**: Proyecto I de Innovacion Tecnologica en IA (Milton Sarria)
+- **Proyecto**: Moni — asistente virtual legal para Carrillo ABGD SAS
+- **Estado**: MVP en produccion, documentacion CRISP-ML(Q) completa
 
 ## Proposito
 
-Este repositorio contiene el material academico completo de dos cursos de la MIAA:
-1. **Analisis de Datos I** (Prof. Jose Armando Ordonez) — EDA, CRISP-DM, pipelines
-2. **Aprendizaje Automatico I** (Prof. Milton Sarria) — Regresion, regularizacion, metricas, KNN
+Este repositorio tiene dos funciones:
 
-El proyecto academico de AD1 es el **Asistente Virtual Legal** para Carrillo Abogados, que fundamenta las decisiones tecnicas del ai-service productivo.
+1. **Documentacion del proyecto Moni** siguiendo CRISP-ML(Q) — 7 documentos en `docs/`
+2. **Material academico** de la MIAA — 5 cursos en `courses/`
+
+El codigo productivo de Moni vive en `backend-services/ai-service`. Aqui NO se duplica codigo — solo documentacion, analisis y experimentacion.
 
 ## Estructura
 
 ```
-Análisis de Datos I/          # Curso finalizado — sustentación 14 Mar 2026
-├── Sesión 1-5/                # Material por sesión (PDFs, notebooks, datasets)
-├── Apuntes del Curso/         # 8 PDFs de notas
-├── eda_couse-main/            # Repo del profesor (notebooks de laboratorio)
-└── Plantilla ExpoFinal...     # Template PPTX para sustentación
-
-Aprendizaje Automatico I/     # Curso finalizado — examen 13 Mar 2026
-├── Unidad 1-5/                # Material por unidad (PDFs, notebooks, datasets)
-├── Taller Final/              # Caña de azúcar (datasets + rúbrica)
-├── Libros del curso/          # Referencias bibliográficas
-├── PracFin_N_*.ipynb          # Prácticas finales resueltas
-└── Examen Final AU 1.md       # Examen final resuelto
+docs/                          # CRISP-ML(Q) — documentacion principal
+├── 01-business-understanding.md
+├── 02-data-engineering.md
+├── 03-model-engineering.md
+├── 04-evaluation.md
+├── 05-deployment.md
+├── 06-monitoring.md
+└── 07-ethics-compliance.md
+notebooks/                     # Jupyter notebooks de analisis
+reports/                       # Entregas del curso (etapa-1, etapa-2, reporte-final)
+references/                    # Papers y articulos de referencia
+courses/                       # Material academico MIAA (5 cursos)
 ```
 
-## Entregables Academicos — AD1
+## Cursos
 
-| Entregable | Ubicacion | Estado |
-|---|---|---|
-| Taller 1: Formulacion proyecto | Sesion 2/10. Taller 1...pdf | COMPLETADO |
-| Taller 2: Arquitectura de datos | Sesion 3/16. Taller_2...ipynb | COMPLETADO |
-| Taller 3: Preparacion de datos | Sesion 5/ (requisitos en PDF) | PENDIENTE |
-| Sustentacion final | Video/presentacion 10 min | 14 Mar 2026 |
+| Curso | Periodo | Estado |
+|-------|---------|--------|
+| Analisis de Datos I | 2025-2 | Completado |
+| Aprendizaje Automatico I | 2025-2 | Completado |
+| Aprendizaje Automatico II | 2026-1 | En curso |
+| Extraccion y Almacenamiento de Datos | 2026-1 | En curso |
+| Proyecto I de Innovacion Tecnologica en IA | 2026-1 | En curso |
 
-## Entregables Academicos — ML1
+## Stack del proyecto Moni
 
-| Entregable | Ubicacion | Estado |
-|---|---|---|
-| Practicas finales 1-3 | PracFin_N_1/2/3 (.md + .ipynb) | COMPLETADO |
-| Taller final (cana de azucar) | Taller Final/ | COMPLETADO |
-| Examen final | Examen Final AU 1.md | COMPLETADO |
+- Python 3.12 + FastAPI + google-genai + pgvector + httpx
+- LLM: Gemini 2.5 Flash | Embeddings: gemini-embedding-001 (768 dims)
+- DB: PostgreSQL 16 + pgvector en Neon | Infra: GCP Cloud Run
+- Metodologia: CRISP-ML(Q) | Compliance: Ley 1581/2012
 
-## Stack Tecnico
-- **Lenguaje**: Python 3.12
-- **ML/Data**: scikit-learn, pandas, numpy, matplotlib, seaborn
-- **Ambiente**: Google Colab (notebooks con badges Colab)
-- **NLP/RAG (futuro)**: LangChain, ChromaDB, Claude API
+## Reglas
 
-## Relacion con otros repos
-
-| Repo | Relacion |
-|---|---|
-| `backend-services/` | Codigo productivo del ai-service (futuro) |
-| `documentation/` | Documentacion oficial (fuente de verdad) |
-| `frontend/` | UI del dashboard y chatbot |
-
-## Comunicacion
-- **Idioma**: Espanol
-- **Tono**: Tecnico-academico
-- **IA**: Nivel 4 IAG Completa permitida en ambos cursos
+- Espanol para documentacion, ingles para codigo
+- Tono academico-profesional en docs/ y reports/
+- No duplicar codigo productivo de backend-services
+- Notebooks deben ser reproducibles (datos incluidos o URL documentada)
+- Entregas del curso van en reports/ con el formato de la universidad

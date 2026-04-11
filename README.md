@@ -1,72 +1,125 @@
-> **ARCHIVED**: Este repositorio contiene material academico completado de la Maestria en IA Aplicada (MIAA), Universidad Icesi, periodo 2026-1. No recibe actualizaciones activas. Sirve como referencia historica para la fundamentacion AI del proyecto Carrillo Abogados.
+# Moni — Asistente Virtual Legal con IA
+
+**Proyecto de Innovacion Tecnologica en Inteligencia Artificial**
+Maestria en IA Aplicada (MIAA) — Universidad Icesi, Cali, Colombia
 
 ---
 
-# MIAA AI Research — Carrillo Abogados
+## Descripcion
 
-Repositorio academico de la **Maestria en IA Aplicada (MIAA)** de la Universidad Icesi, periodo 2026-1. Contiene el material completo de dos cursos que fundamentan el desarrollo del **Asistente Virtual Legal** para Carrillo ABGD SAS.
+Moni es un asistente virtual inteligente desarrollado para **Carrillo ABGD SAS**, una firma de abogados con mas de 30 anos de experiencia en Cali, Colombia. El sistema utiliza **Retrieval-Augmented Generation (RAG)** para responder consultas legales frecuentes, capturar leads de forma conversacional, y agendar citas directamente en el calendario del equipo.
 
-## Estructura
+Este repositorio documenta el desarrollo de Moni siguiendo la metodologia **CRISP-ML(Q)** (Cross-Industry Standard Process for Machine Learning with Quality Assurance), y sirve como entregable academico del curso *Proyecto I de Innovacion Tecnologica en IA*.
+
+## Stack Tecnico
+
+| Componente | Tecnologia |
+|-----------|-----------|
+| **LLM** | Google Gemini 2.5 Flash |
+| **Embeddings** | gemini-embedding-001 (768 dims, Matryoshka) |
+| **Vector DB** | PostgreSQL 16 + pgvector (Neon serverless) |
+| **Backend** | Python 3.12 + FastAPI 0.115 |
+| **Frontend** | Next.js 16 + React 18 (TypeScript) |
+| **Infraestructura** | GCP Cloud Run + Vercel |
+| **Automatizacion** | n8n Cloud (lead scoring, agendamiento) |
+| **SDK** | google-genai (API directa, sin LangChain) |
+
+## Arquitectura
+
+```
+[Usuario] → [Frontend Next.js] → [API Gateway] → [ai-service FastAPI]
+                                                         │
+                                    ┌────────────────────┤
+                                    │                    │
+                              [pgvector RAG]      [Gemini 2.5 Flash]
+                              Corpus 16 docs      System Prompt 98 lineas
+                                    │                    │
+                                    └────────┬───────────┘
+                                             │
+                                      [Respuesta JSON]
+                                             │
+                                    ┌────────┼────────────┐
+                                    │        │            │
+                              [Respuesta] [Lead]    [Agendamiento]
+                               al usuario  Capture   via n8n + Calendar
+```
+
+## Documentacion CRISP-ML(Q)
+
+| Fase | Documento | Descripcion |
+|------|----------|-------------|
+| 1 | [Business Understanding](docs/01-business-understanding.md) | Problema, pregunta SMART, KPIs, viabilidad |
+| 2 | [Data Engineering](docs/02-data-engineering.md) | Arquitectura Medallion, pipeline embeddings, schema |
+| 3 | [Model Engineering](docs/03-model-engineering.md) | RAG, seleccion de modelo, system prompt, lead detection |
+| 4 | [Evaluation](docs/04-evaluation.md) | Metricas, tests, QA, decision de despliegue |
+| 5 | [Deployment](docs/05-deployment.md) | Cloud Run, Docker, CI/CD, networking |
+| 6 | [Monitoring](docs/06-monitoring.md) | Observabilidad, model staleness, actualizacion |
+| — | [Ethics & Compliance](docs/07-ethics-compliance.md) | Ley 1581/2012, sesgos, impacto social |
+
+## Estructura del Repositorio
 
 ```
 miaa-ai-research/
-├── Análisis de Datos I/           # Curso: Fundamentos de Análisis de Datos I (EDA)
-│   ├── Sesión 1/                  # CRISP-DM, Pregunta SMART, EDA vino
-│   ├── Sesión 2/                  # Tipos de analítica, Taller 1 (Formulación)
-│   ├── Sesión 3/                  # Ingeniería de datos, Taller 2 (Arquitectura)
-│   ├── Sesión 4/                  # EDA, outliers, imputación, visualización
-│   ├── Sesión 5/                  # Pipelines, feature engineering, Taller 3
-│   ├── Apuntes del Curso/         # PDFs de notas por sesión
-│   ├── eda_couse-main/            # Repo del profesor (notebooks + datasets)
-│   └── Plantilla ExpoFinal...     # Template sustentación final
-├── Aprendizaje Automatico I/      # Curso: Aprendizaje Automático I
-│   ├── Unidad 1/                  # Regresión lineal (OLS, gradient descent)
-│   ├── Unidad 2/                  # Regresión logística, regularización
-│   ├── Unidad 3/                  # Multicolinealidad, sesgo-varianza
-│   ├── Unidad 4/                  # Métricas (F1, ROC, AUC), cross-validation
-│   ├── Unidad 5/                  # K-Nearest Neighbors (KNN)
-│   ├── Taller Final/              # Predicción rendimiento caña de azúcar
-│   ├── Diapositivas del Curso/    # Slides del profesor
-│   ├── Libros del curso/          # ISLP, Andrew NG, etc.
-│   └── PracFin_N_*.ipynb          # Prácticas finales resueltas
+├── docs/                          # Documentacion CRISP-ML(Q) del proyecto Moni
+│   ├── 01-business-understanding.md
+│   ├── 02-data-engineering.md
+│   ├── 03-model-engineering.md
+│   ├── 04-evaluation.md
+│   ├── 05-deployment.md
+│   ├── 06-monitoring.md
+│   └── 07-ethics-compliance.md
+├── notebooks/                     # Analisis y experimentacion reproducible
+├── reports/                       # Entregas formales del curso
+│   ├── etapa-1/                   # Reporte primera etapa (20%)
+│   ├── etapa-2/                   # Reporte segunda etapa (10%)
+│   └── reporte-final/             # Reporte final (70%)
+├── references/                    # Papers y material de referencia
+├── courses/                       # Material academico de la maestria
+│   ├── analisis-datos-1/          # Analisis de Datos I (completado 2025-2)
+│   ├── aprendizaje-automatico-1/  # Aprendizaje Automatico I (completado 2025-2)
+│   ├── aprendizaje-automatico-2/  # Aprendizaje Automatico II (2026-1)
+│   ├── extraccion-almacenamiento/ # Extraccion y Almacenamiento de Datos (2026-1)
+│   └── proyecto-1/                # Proyecto I — este proyecto (2026-1)
 ├── CLAUDE.md                      # Instrucciones para Claude Code
 └── README.md                      # Este archivo
 ```
 
-## Cursos (Ambos finalizados — Periodo 2026-1)
+## Codigo Productivo
 
-### Análisis de Datos I
-- **Profesor**: Jose Armando Ordoñez Cordoba
-- **Enfoque**: CRISP-DM, EDA, ingeniería de datos, pipelines, feature engineering
-- **Proyecto final**: Asistente Virtual Legal (RAG) para Carrillo Abogados
-- **Evaluación**: Talleres 40% + Proyecto final 60%
-- **IA**: Nivel 4 — IAG Completa permitida
-- **Estado**: FINALIZADO (sustentación 14 Mar 2026)
+El codigo fuente de Moni vive en el repositorio [`backend-services/ai-service`](https://github.com/Carrillo-Abogados/backend-services). Este repositorio contiene exclusivamente documentacion, analisis y experimentacion. No se duplica codigo productivo.
 
-### Aprendizaje Automático I
-- **Profesor**: Milton Sarria
-- **Enfoque**: Regresión lineal/logística, regularización (L1/L2), métricas, KNN
-- **Taller final**: Predicción rendimiento caña de azúcar (Ingenio Providencia)
-- **Examen final**: Clasificación riesgo cardiovascular
-- **Estado**: FINALIZADO (examen 13 Mar 2026)
+| Repositorio | Contenido |
+|------------|-----------|
+| [`backend-services`](https://github.com/Carrillo-Abogados/backend-services) | ai-service (FastAPI), 6 microservicios Java |
+| [`frontend`](https://github.com/Carrillo-Abogados/frontend) | Next.js 16, widget de chat Moni |
+| [`documentation`](https://github.com/Carrillo-Abogados/documentation) | Documentacion oficial del proyecto |
+| **Este repositorio** | Documentacion CRISP-ML(Q), material academico, entregas del curso |
 
-## Proyecto Académico: Asistente Virtual Legal
+## Informacion Academica
 
-**Pregunta SMART**: ¿Cómo puede un asistente virtual basado en IA generativa (RAG) integrado al CRM de Carrillo Abogados, reducir en un 75% el tiempo de primera respuesta a leads y automatizar el 70% de las consultas frecuentes, liberando 400 horas facturables anuales?
+| Campo | Valor |
+|-------|-------|
+| **Programa** | Maestria en Inteligencia Artificial Aplicada (MIAA) |
+| **Universidad** | Universidad Icesi, Cali, Colombia |
+| **Periodo** | 2026-1 |
+| **Curso** | Proyecto I de Innovacion Tecnologica en IA |
+| **Docente** | Milton Orlando Sarria Paja |
+| **Estudiante** | Alexis Jaramillo Martinez |
+| **Metodologia** | CRISP-ML(Q) |
+| **Nivel IAG** | 5 — Exploracion con IAG |
 
-| Componente | Tipo Analytics | Estado |
-|---|---|---|
-| Lead Scoring | Predictivo (heurístico → ML) | Implementado en n8n Cloud |
-| Intent Classification | NLP multiclase | Diseño |
-| RAG Pipeline | IA Generativa (LLM + Vector DB) | Diseño |
-| Data Pipeline | Arquitectura Medallion | Implementado en PostgreSQL |
+## Estado
 
-**Metodología**: CRISP-DM | **Compliance**: Ley 1581/2012
-
-## Relación con la plataforma
-
-El código productivo vive en [`backend-services/`](https://github.com/Carrillo-Abogados/backend-services). Este repositorio es exclusivamente material académico y de investigación. La documentación oficial está en [`documentation/`](https://github.com/Carrillo-Abogados/documentation).
+| Componente | Estado |
+|-----------|--------|
+| ai-service (Moni) | En produccion (Cloud Run) |
+| RAG Pipeline | 16 documentos, pgvector HNSW |
+| Lead Capture | Funcionando (regex + Gemini + n8n) |
+| Agendamiento | Funcionando (n8n + Google Calendar + Meet) |
+| Tests | 20 tests unitarios, 100% pass |
+| Documentacion CRISP-ML(Q) | Completa (7 documentos) |
+| Entregas del curso | En progreso |
 
 ---
 
-*Maestría en IA Aplicada — Universidad Icesi, Cali, Colombia — Periodo 2026-1*
+*Maestria en IA Aplicada — Universidad Icesi, Cali, Colombia — Periodo 2026-1*

@@ -62,4 +62,6 @@ mlruns/
 tmp/
 temp/
 *.tmp
-CONTENIDO_DIAPOSITIVAS_SUSTENTACION.md
+
+# Claude Code local settings
+.claude/
